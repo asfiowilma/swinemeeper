@@ -4,10 +4,11 @@
 	import { board, difficulty, boardState, flags, gameState, time } from '$stores/board';
 	import { ChevronDown, Lock, Play, RefreshCcw } from 'lucide-svelte';
 	import Timer from './Timer.svelte';
+	import { shopOpen, shopState } from '$stores/shop';
 
-	const BOARD_WIDTH = LEVELS[$difficulty].width;
-	const BOARD_HEIGHT = LEVELS[$difficulty].height;
-	const BOMBS = LEVELS[$difficulty].bombs;
+	$: BOARD_WIDTH = LEVELS[$difficulty].width;
+	$: BOARD_HEIGHT = LEVELS[$difficulty].height;
+	$: BOMBS = LEVELS[$difficulty].bombs;
 
 	const generateBoard = () => {
 		let bombs = BOMBS;
@@ -62,27 +63,37 @@
 	const resetGame = () => {
 		$gameState = 'NOT STARTED';
 	};
+
+	const selectDifficulty = (selected: string) => {
+		if ($shopState[selected]) {
+			$difficulty = selected as Difficulty;
+			resetGame();
+		} else {
+			$shopOpen = true;
+		}
+	};
 </script>
 
 <div class="flex items-center gap-4 p-2 mx-auto rounded-lg bg-base-300 w-max">
-	<details class="dropdown">
-		<summary class="m-1 btn btn-sm btn-neutral"
-			>Difficulty: {capitalize($difficulty)} <ChevronDown /></summary
-		>
-		<ul class="p-2 shadow menu dropdown-content z-[1] bg-base-200 rounded-box w-52">
-			<li><span>Beginner</span></li>
-			<li>
-				<span class="bg-base-300 hover:bg-base-300 text-neutral-content/50"
-					><Lock size={16} /> Intermediate</span
-				>
-			</li>
-			<li>
-				<span class="bg-base-300 hover:bg-base-300 text-neutral-content/50"
-					><Lock size={16} /> Expert</span
-				>
-			</li>
+	<div class="dropdown">
+		<div tabIndex={0} role="button" class="m-1 btn btn-sm btn-neutral">
+			Difficulty: {capitalize($difficulty)}
+			<ChevronDown />
+		</div>
+		<ul tabIndex={0} class="p-2 shadow menu dropdown-content z-[1] bg-base-200 rounded-box w-64">
+			{#each Object.keys(LEVELS) as level}
+				<li class:disabled={!$shopState[level]}>
+					<a href="?" role="button" on:click={() => selectDifficulty(level)} class="flex">
+						{#if !$shopState[level]}
+							<Lock size={16} />
+						{/if}
+						<div class="grow">{capitalize(level)}</div>
+						<span>{LEVELS[level].width}x{LEVELS[level].height} 💣{LEVELS[level].bombs}</span></a
+					>
+				</li>
+			{/each}
 		</ul>
-	</details>
+	</div>
 	<div>
 		💣 {$flags.flatMap((row) => row).reduce((flagCount, flag) => flagCount + flag, 0)}/<span
 			class="font-bold">{BOMBS}</span
@@ -99,11 +110,6 @@
 				<Play size={16} />
 				Start
 			</button>
-			<!-- {:else if $gameState == 'WON' || $gameState == 'LOST'}
-			<button on:click={startGame} class="btn btn-sm btn-primary">
-				<Play size={16} />
-				Restart
-			</button> -->
 		{:else}
 			<Timer />
 		{/if}

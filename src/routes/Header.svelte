@@ -10,10 +10,10 @@
 		</div>
 		<div class="navbar-center"><a href="/" class="text-lg btn btn-ghost">SwineMeeper</a></div>
 		<div class="navbar-end">
-			<div class="btn">
+			<label for="drawer" class="btn">
 				<CircleDollarSign />
 				{$coins}
-			</div>
+			</label>
 		</div>
 	</div>
 </header>

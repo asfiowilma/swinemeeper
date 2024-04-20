@@ -5,9 +5,9 @@
 	import { coins } from '$stores/shop';
 	import { tick } from 'svelte';
 
-	const BOARD_WIDTH = LEVELS[$difficulty].width;
-	const BOARD_HEIGHT = LEVELS[$difficulty].height;
-	const BOMBS = LEVELS[$difficulty].bombs;
+	$: BOARD_WIDTH = LEVELS[$difficulty].width;
+	$: BOARD_HEIGHT = LEVELS[$difficulty].height;
+	$: BOMBS = LEVELS[$difficulty].bombs;
 
 	const initGame = async () => {
 		await tick();
@@ -72,7 +72,7 @@
 </script>
 
 <div
-	class="grid w-full gap-1 py-4 mx-auto md:w-max"
+	class="grid w-full gap-0.5 py-4 mx-auto md:w-max"
 	style:grid-template-columns="repeat({BOARD_HEIGHT}, minmax(0, 1fr))"
 	style:grid-template-rows="repeat({BOARD_WIDTH}, minmax(0, 1fr))"
 >
@@ -80,7 +80,7 @@
 		<span class="loading loading-spinner loading-xs"></span>
 	{:else if $gameState == 'NOT STARTED'}
 		{#each Array(BOARD_HEIGHT * BOARD_WIDTH) as _}
-			<div class="w-full rounded-lg aspect-square md:w-10 lg:w-8 bg-base-300"></div>
+			<div class="w-full rounded-md aspect-square md:w-10 lg:w-8 bg-base-300"></div>
 		{/each}
 	{:else}
 		{#each $board as row, y}
@@ -108,7 +108,7 @@
 					}}
 				>
 					<div
-						class="grid w-full h-full text-lg font-bold rounded-lg aspect-square md:w-10 lg:w-8 swap-on place-items-center"
+						class="grid w-full h-full text-lg font-bold rounded-md aspect-square md:w-10 lg:w-8 swap-on place-items-center"
 						class:unopened={!$boardState[y][x]}
 						class:opened={$boardState[y][x]}
 						class:flag={$flags[y][x]}
@@ -130,7 +130,7 @@
 							🚩
 						{/if}
 					</div>
-					<div class="rounded-lg aspect-square md:w-10 lg:w-8 swap-off bg-base-300"></div>
+					<div class="rounded-md aspect-square md:w-10 lg:w-8 swap-off bg-base-300"></div>
 				</button>
 			{/each}
 		{/each}
