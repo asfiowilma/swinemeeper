@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { LEVELS } from '$lib/constants';
 	import { capitalize, create2dArray, getSurroundingCoordinates } from '$lib/utils';
-	import { board, difficulty, boardState, flags, gameState } from '$stores/board';
+	import { board, difficulty, boardState, flags, gameState, time } from '$stores/board';
 	import { ChevronDown, Lock, Play, RefreshCcw } from 'lucide-svelte';
+	import Timer from './Timer.svelte';
 
 	const BOARD_WIDTH = LEVELS[$difficulty].width;
 	const BOARD_HEIGHT = LEVELS[$difficulty].height;
@@ -52,9 +53,14 @@
 		}
 	};
 
-	export const startGame = () => {
+	const startGame = () => {
+		$time = 0;
 		$gameState = 'COOKING';
 		generateBoard();
+	};
+
+	const resetGame = () => {
+		$gameState = 'NOT STARTED';
 	};
 </script>
 
@@ -83,16 +89,23 @@
 		>
 	</div>
 	<div class="flex gap-2">
-		<div class="btn btn-sm btn-neutral"><RefreshCcw size={16} /> Reset</div>
-		<button on:click={startGame} class="btn btn-sm btn-primary">
-			<Play size={16} />
-			{#if $gameState == 'NOT STARTED'}
+		{#if $gameState !== 'NOT STARTED'}
+			<button class="btn btn-sm btn-neutral" on:click={resetGame}
+				><RefreshCcw size={16} /> Reset</button
+			>
+		{/if}
+		{#if $gameState == 'NOT STARTED'}
+			<button on:click={startGame} class="btn btn-sm btn-primary">
+				<Play size={16} />
 				Start
-			{:else if $gameState == 'WON' || $gameState == 'LOST'}
+			</button>
+			<!-- {:else if $gameState == 'WON' || $gameState == 'LOST'}
+			<button on:click={startGame} class="btn btn-sm btn-primary">
+				<Play size={16} />
 				Restart
-			{:else}
-				0:00
-			{/if}
-		</button>
+			</button> -->
+		{:else}
+			<Timer />
+		{/if}
 	</div>
 </div>

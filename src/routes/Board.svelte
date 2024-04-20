@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { LEVELS } from '$lib/constants';
 	import { getSurroundingCoordinates, mod } from '$lib/utils';
-	import { board, boardState, flags, difficulty, gameState } from '$stores/board';
+	import { board, time, boardState, flags, difficulty, gameState } from '$stores/board';
 	import { coins } from '$stores/shop';
 	import { tick } from 'svelte';
 
@@ -22,6 +22,9 @@
 		if (isWin) {
 			$gameState = 'WON';
 			$coins += BOMBS;
+			if ($time < 60) $coins += 5;
+			else if ($time < 60 * 2) $coins += 3;
+			else if ($time < 60 * 3) $coins += 1;
 		}
 	};
 
