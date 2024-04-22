@@ -26,7 +26,7 @@
 	</div>
 {:else if $gameState === 'LOST'}
 	<div class="absolute grid w-full z-[1] h-full place-content-center">
-		<div class="card bg-neutral shadow-lg">
+		<div class="shadow-lg card bg-neutral">
 			<div class="card-body">
 				<div class="flex flex-col items-center gap-4">
 					<div class="text-xl font-bold">Game Over</div>
@@ -43,21 +43,21 @@
 		</div>
 	</div>
 {:else if $gameState === 'WON'}
-	<div class="absolute grid w-full z-[1] h-full place-content-center">
-		<div class="card bg-base-300 shadow-lg">
-			<div class="card-body items-center">
+	<div class="fixed grid w-full z-[1] h-full place-content-center">
+		<div class="shadow-lg card bg-base-300">
+			<div class="items-center card-body">
 				<div class="text-2xl font-bold">Congratulations!</div>
 				<p>
-					You completed the <span class="font-bold text-success uppercase">{$difficulty}</span> board
+					You completed the <span class="font-bold uppercase text-success">{$difficulty}</span> board
 					after
 				</p>
-				<p class="font-bold text-xl countdown my-4">
+				<p class="my-4 text-xl font-bold countdown">
 					<Timer size={32} />
 					<span style="--value:{Math.floor($time / 60)};"></span>:
 					<span style="--value:{$time % 60};"></span>
 				</p>
 				<div
-					class="grid w-52 mb-2 gap-px"
+					class="grid gap-px mb-2 w-52"
 					style:grid-template-columns="repeat({getHeight()}, minmax(0, 1fr))"
 					style:grid-template-rows="repeat({getWidth()}, minmax(0, 1fr))"
 				>
@@ -77,7 +77,7 @@
 					</div>
 				</div>
 
-				<div class="card-actions mt-2">
+				<div class="mt-2 card-actions">
 					<button
 						on:click={() => {
 							resetGame();
