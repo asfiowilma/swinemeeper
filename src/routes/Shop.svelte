@@ -13,10 +13,10 @@
 	};
 </script>
 
-<ul class="w-full min-h-full px-4 pt-0 menu max-w-96 bg-base-100 text-base-content">
-	<label for="drawer" class="flex items-center gap-4 p-4 -mx-4 bg-base-300">
-		<ChevronLeft size={24} />
-		<h2 class="text-2xl font-bold grow">Shop</h2>
+<ul class="min-h-full px-4 pt-0 w-96 menu bg-base-100 text-base-content">
+	<label for="drawer" class="flex items-center gap-4 p-4 -mx-4 w-96 bg-base-300">
+		<ChevronLeft size={24} class="block md:hidden" />
+		<h2 class="text-2xl font-bold grow md:ml-4">Shop</h2>
 		<span class="btn no-animation btn-ghost hover:bg-transparent"
 			><CircleDollarSign class="text-warning" /> {$coins}</span
 		>

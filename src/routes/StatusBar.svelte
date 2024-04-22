@@ -1,68 +1,13 @@
 <script lang="ts">
 	import { LEVELS } from '$lib/constants';
-	import { capitalize, create2dArray, getSurroundingCoordinates } from '$lib/utils';
-	import { board, difficulty, boardState, flags, gameState, time } from '$stores/board';
+	import { capitalize } from '$lib/utils';
+	import { difficulty, flags, gameState } from '$stores/board';
 	import { ChevronDown, Lock, Play, RefreshCcw } from 'lucide-svelte';
 	import Timer from './Timer.svelte';
 	import { shopOpen, shopState } from '$stores/shop';
+	import { resetGame, startGame } from './Board';
 
-	$: BOARD_WIDTH = LEVELS[$difficulty].width;
-	$: BOARD_HEIGHT = LEVELS[$difficulty].height;
 	$: BOMBS = LEVELS[$difficulty].bombs;
-
-	const generateBoard = () => {
-		let bombs = BOMBS;
-		const TOTAL_CELLS = BOARD_WIDTH * BOARD_HEIGHT;
-
-		$board = create2dArray(BOARD_WIDTH, BOARD_HEIGHT);
-		$boardState = create2dArray(BOARD_WIDTH, BOARD_HEIGHT);
-		$flags = create2dArray(BOARD_WIDTH, BOARD_HEIGHT);
-
-		// init everything with 0
-		for (let index = 0; index < BOARD_HEIGHT; index++) $board[index].fill(0);
-
-		// populate
-		for (let index = 0; index < BOARD_HEIGHT; index++) {
-			const row = $board[index];
-
-			for (let cell = 0; cell < BOARD_WIDTH; cell++) {
-				if (bombs == 0) {
-					continue;
-				}
-
-				const odds = bombs / (TOTAL_CELLS - (index * BOARD_HEIGHT + cell + 1));
-				const isBomb = Math.random() < odds;
-
-				if (bombs > 0 && isBomb) {
-					bombs -= 1;
-					row[cell] = '💣';
-
-					const surroundingCoordinates = getSurroundingCoordinates(cell, index);
-					for (const coord of Object.values(surroundingCoordinates)) {
-						const [y, x] = coord;
-						if (
-							!coord.some((x) => x < 0) &&
-							y < BOARD_HEIGHT &&
-							x < BOARD_WIDTH &&
-							$board[y][x] != '💣'
-						) {
-							$board[y][x] = ($board[y][x] as number) + 1;
-						}
-					}
-				}
-			}
-		}
-	};
-
-	const startGame = () => {
-		$time = 0;
-		$gameState = 'COOKING';
-		generateBoard();
-	};
-
-	const resetGame = () => {
-		$gameState = 'NOT STARTED';
-	};
 
 	const selectDifficulty = (selected: string) => {
 		if ($shopState[selected]) {
@@ -74,7 +19,9 @@
 	};
 </script>
 
-<div class="flex items-center gap-4 p-2 mx-auto rounded-lg bg-base-300 w-max">
+<div
+	class="flex flex-col items-center w-full gap-2 p-2 mx-auto mb-2 rounded-lg sm:w-max sm:flex-row bg-base-300"
+>
 	<div class="dropdown">
 		<div tabIndex={0} role="button" class="m-1 btn btn-sm btn-neutral">
 			Difficulty: {capitalize($difficulty)}
@@ -94,14 +41,18 @@
 			{/each}
 		</ul>
 	</div>
-	<div>
-		💣 {$flags.flatMap((row) => row).reduce((flagCount, flag) => flagCount + flag, 0)}/<span
-			class="font-bold">{BOMBS}</span
-		>
-	</div>
-	<div class="flex gap-2">
+	<div
+		class="grid w-full gap-2 sm:w-max place-items-center"
+		class:grid-cols-2={$gameState === 'NOT STARTED'}
+		class:grid-cols-3={$gameState !== 'NOT STARTED'}
+	>
+		<div>
+			💣 {$flags.flatMap((row) => row).reduce((flagCount, flag) => flagCount + flag, 0)}/<span
+				class="font-bold">{BOMBS}</span
+			>
+		</div>
 		{#if $gameState !== 'NOT STARTED'}
-			<button class="btn btn-sm btn-neutral" on:click={resetGame}
+			<button class="btn btn-sm btn-neutral w-full" on:click={resetGame}
 				><RefreshCcw size={16} /> Reset</button
 			>
 		{/if}

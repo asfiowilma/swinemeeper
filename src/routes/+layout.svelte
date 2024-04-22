@@ -6,7 +6,7 @@
 	import { Toaster } from 'svelte-french-toast';
 </script>
 
-<div class="app drawer lg:drawer-open drawer-end">
+<div class="app drawer drawer-end">
 	<input id="drawer" type="checkbox" bind:checked={$shopOpen} class="drawer-toggle" />
 	<div class="drawer-content">
 		<Header />
